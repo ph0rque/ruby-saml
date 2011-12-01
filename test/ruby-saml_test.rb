@@ -183,13 +183,23 @@ class RubySamlTest < Test::Unit::TestCase
                           </samlp:Status>
                           </samlp:LogoutResponse>"
 
-
       params["SAMLResponse"] = encode(deflate(logout_xml))
+		
       logoutresponse = Onelogin::Saml::Logoutresponse.new(params["SAMLResponse"])
 
       assert_equal logoutresponse.issuer, issuer
       assert_equal logoutresponse.in_response_to, transaction_id
       assert_equal true, logoutresponse.success?
+		
+		# Verify an uncompressed, encoded response
+		params["SAMLResponse"] = encode(logout_xml)
+		
+      logoutresponse = Onelogin::Saml::Logoutresponse.new(params["SAMLResponse"])
+
+      assert_equal logoutresponse.issuer, issuer
+      assert_equal logoutresponse.in_response_to, transaction_id
+      assert_equal true, logoutresponse.success?
+		
     end
 
     should "validate the a failing response" do
